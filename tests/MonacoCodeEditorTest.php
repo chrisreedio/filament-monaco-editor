@@ -2,7 +2,6 @@
 
 use ChrisReedIO\MonacoEditor\Forms\Components\MonacoCodeEditor;
 use ChrisReedIO\MonacoEditor\MonacoEditorServiceProvider;
-use ReflectionMethod;
 
 it('stores configuration for editor language, theme, size, and readonly flag')
     ->tap(fn () => config(['monaco-editor.default_language' => 'blade']))
@@ -57,8 +56,8 @@ it('registers package assets and script data in the service provider')
     ->tap(function () {
         $provider = new MonacoEditorServiceProvider(app());
 
-        $scriptDataMethod = new ReflectionMethod(MonacoEditorServiceProvider::class, 'getScriptData');
-        $assetsMethod = new ReflectionMethod(MonacoEditorServiceProvider::class, 'getAssets');
+        $scriptDataMethod = new \ReflectionMethod(MonacoEditorServiceProvider::class, 'getScriptData');
+        $assetsMethod = new \ReflectionMethod(MonacoEditorServiceProvider::class, 'getAssets');
         $scriptDataMethod->setAccessible(true);
         $assetsMethod->setAccessible(true);
 
