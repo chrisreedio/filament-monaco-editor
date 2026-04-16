@@ -11,6 +11,8 @@ jobs:
   phpstan:
     name: phpstan
     runs-on: ubuntu-latest
+    env:
+      COMPOSER_NO_AUDIT: 1
     steps:
       - uses: actions/checkout@v6
 
@@ -21,9 +23,8 @@ jobs:
           coverage: none
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v4
-        with:
-          composer-options: --no-audit
+        run: |
+          composer install --prefer-dist --no-interaction --no-audit
 
       - name: Run PHPStan
         run: ./vendor/bin/phpstan --error-format=github
