@@ -2,6 +2,8 @@
 
 namespace ChrisReedIO\MonacoEditor;
 
+use ChrisReedIO\MonacoEditor\Commands\MonacoEditorCommand;
+use ChrisReedIO\MonacoEditor\Testing\TestsMonacoEditor;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
@@ -12,8 +14,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use ChrisReedIO\MonacoEditor\Commands\MonacoEditorCommand;
-use ChrisReedIO\MonacoEditor\Testing\TestsMonacoEditor;
 
 class MonacoEditorServiceProvider extends PackageServiceProvider
 {
