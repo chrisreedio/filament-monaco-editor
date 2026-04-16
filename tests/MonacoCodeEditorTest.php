@@ -7,7 +7,14 @@ it('stores configuration for editor language, theme, size, and readonly flag', f
     config(['monaco-editor.default_language' => 'blade']);
     config(['monaco-editor.default_theme' => 'vs-dark']);
     config(['monaco-editor.default_min_height' => '14rem']);
-    config(['monaco-editor.defaults.fontSize' => 12]);
+    config([
+        'monaco-editor.defaults' => [
+            'fontSize' => 12,
+            'lineNumbers' => 'on',
+            'scrollBeyondLastLine' => false,
+            'minimap' => ['enabled' => false],
+        ],
+    ]);
 
     $field = MonacoCodeEditor::make('template')
         ->language('php')
