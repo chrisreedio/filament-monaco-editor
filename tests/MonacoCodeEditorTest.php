@@ -56,8 +56,8 @@ it('registers package assets and script data in the service provider')
     ->tap(function () {
         $provider = new MonacoEditorServiceProvider(app());
 
-        $scriptDataMethod = new \ReflectionMethod(MonacoEditorServiceProvider::class, 'getScriptData');
-        $assetsMethod = new \ReflectionMethod(MonacoEditorServiceProvider::class, 'getAssets');
+        $scriptDataMethod = new ReflectionMethod(MonacoEditorServiceProvider::class, 'getScriptData');
+        $assetsMethod = new ReflectionMethod(MonacoEditorServiceProvider::class, 'getAssets');
         $scriptDataMethod->setAccessible(true);
         $assetsMethod->setAccessible(true);
 
