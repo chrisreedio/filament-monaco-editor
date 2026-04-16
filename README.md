@@ -1,87 +1,155 @@
-# This is my package filament-monaco-editor
+# Filament Monaco Code Editor
+
+Filament v5 form field integration for [Monaco Editor](https://github.com/microsoft/monaco-editor), including dedicated Blade syntax highlighting.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/chrisreedio/filament-monaco-editor.svg?style=flat-square)](https://packagist.org/packages/chrisreedio/filament-monaco-editor)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/chrisreedio/filament-monaco-editor/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/chrisreedio/filament-monaco-editor/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/chrisreedio/filament-monaco-editor/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/chrisreedio/filament-monaco-editor/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/chrisreedio/filament-monaco-editor.svg?style=flat-square)](https://packagist.org/packages/chrisreedio/filament-monaco-editor)
 
+## Compatibility
 
-
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+- PHP ^8.2
+- Filament 5.x
 
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require chrisreedio/filament-monaco-editor
 ```
 
-> [!IMPORTANT]
-> If you have not set up a custom theme and are using Filament Panels follow the instructions in the [Filament Docs](https://filamentphp.com/docs/4.x/styling/overview#creating-a-custom-theme) first.
-
-After setting up a custom theme add the plugin's views to your theme css file or your app's css file if using the standalone packages.
-
-```css
-@source '../../../../vendor/chrisreedio/filament-monaco-editor/resources/**/*.blade.php';
-```
-
-You can publish and run the migrations with:
+Run the package build to generate frontend assets:
 
 ```bash
-php artisan vendor:publish --tag="filament-monaco-editor-migrations"
-php artisan migrate
+cd vendor/chrisreedio/filament-monaco-editor
+npm install
+npm run build
 ```
 
-You can publish the config file with:
+Publish package config and views (optional):
 
 ```bash
 php artisan vendor:publish --tag="filament-monaco-editor-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
 php artisan vendor:publish --tag="filament-monaco-editor-views"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
+php artisan filament:assets
 ```
 
 ## Usage
 
+Use the field directly in your form schema:
+
 ```php
-$monacoEditor = new ChrisReedIO\MonacoEditor();
-echo $monacoEditor->echoPhrase('Hello, ChrisReedIO!');
+use ChrisReedIO\MonacoEditor\Forms\Components\MonacoCodeEditor;
+
+MonacoCodeEditor::make('template')
+    ->language('blade')
+    ->theme('vs-dark')
+    ->height('24rem')
+    ->options([
+        'tabSize' => 2,
+        'insertSpaces' => true,
+    ]);
 ```
 
-## Testing
+Blade, PHP, and custom heights:
+
+```php
+MonacoCodeEditor::make('blade_view')
+    ->language('blade')
+    ->theme('vs-dark');
+
+MonacoCodeEditor::make('php_code')
+    ->language('php')
+    ->theme('vs-light')
+    ->minHeight(320)
+    ->readonly();
+```
+
+You can also use the package entrypoint facade for concise creation:
+
+```php
+use MonacoEditor;
+
+MonacoEditor::blade('blade_view')->height('20rem');
+MonacoEditor::php('php_payload')->readonly();
+```
+
+### Fluent API
+
+- `language(string $language)`
+- `theme(string $theme)`
+- `minHeight(string|int $height)` / `height(string|int $height)`
+- `readonly(bool $condition = true)`
+- `options(array $options)` (merged into the final Monaco options)
+- `getConfig()` / `getMonacoConfig()` for Alpine payload
+
+## Configuration
+
+Publish and customize `config/monaco-editor.php`:
+
+```php
+return [
+    'default_language' => 'blade',
+    'default_theme' => 'vs-dark',
+    'default_min_height' => '16rem',
+    'defaults' => [
+        'fontSize' => 14,
+        'lineNumbers' => 'on',
+        'scrollBeyondLastLine' => false,
+        'minimap' => ['enabled' => false],
+    ],
+    'blade' => [
+        'keywords' => [
+            'if', 'elseif', 'else', 'endif', 'foreach', 'endforeach',
+            'for', 'endfor', 'while', 'endwhile', 'php', 'endphp', 'csrf',
+            'method', 'can', 'endcan', 'auth', 'guest', 'unless', 'endunless',
+        ],
+        'directives' => [
+            'if',
+            'elseif',
+            'else',
+            'endif',
+            'foreach',
+            'endforeach',
+            'section',
+            'endsection',
+        ],
+        'patterns' => [
+            ['/\$[A-Za-z_][A-Za-z0-9_]*/', 'variable'],
+        ],
+        'delimiters' => [
+            'output' => ['{{', '}}'],
+            'raw' => ['{!!', '!!}'],
+            'comment' => ['{{--', '--}}'],
+        ],
+    ],
+];
+```
+
+## Blade highlighting
+
+- `blade` language is registered only when `language('blade')` is used.
+- Tokens include output/raw/comment delimiters and directives (`@if`, `@foreach`, etc.).
+- You can add custom syntax patterns via `blade.patterns`.
+
+## Build artifacts consumed by Filament
+
+- `resources/dist/components/monaco-code-editor.js`
+- `resources/dist/monaco-code-editor.css`
+
+The package service provider wires these assets through Filament `Asset` registration and script data.
+
+## Development
 
 ```bash
+npm run build
 composer test
 ```
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
 
 ## Credits
 
 - [Chris Reed](https://github.com/chrisreedio)
-- [All Contributors](../../contributors)
+- Inspired by the broader Monaco ecosystem
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+This package is released under the [MIT license](LICENSE.md).

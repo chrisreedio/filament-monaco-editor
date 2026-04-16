@@ -5,7 +5,6 @@ namespace ChrisReedIO\MonacoEditor;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
@@ -100,9 +99,14 @@ class MonacoEditorServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            // AlpineComponent::make('filament-monaco-editor', __DIR__ . '/../resources/dist/components/filament-monaco-editor.js'),
-            // Css::make('filament-monaco-editor-styles', __DIR__ . '/../resources/dist/filament-monaco-editor.css'),
-            // Js::make('filament-monaco-editor-scripts', __DIR__ . '/../resources/dist/filament-monaco-editor.js'),
+            AlpineComponent::make(
+                'monaco-code-editor',
+                __DIR__ . '/../resources/dist/components/monaco-code-editor.js',
+            ),
+            Css::make(
+                'monaco-code-editor-styles',
+                __DIR__ . '/../resources/dist/monaco-code-editor.css',
+            ),
         ];
     }
 
@@ -137,7 +141,27 @@ class MonacoEditorServiceProvider extends PackageServiceProvider
      */
     protected function getScriptData(): array
     {
-        return [];
+        $bladeConfig = config('monaco-editor.blade', []);
+        $bladeDirectives = $bladeConfig['directives'] ?? ['if', 'elseif', 'else', 'endif', 'foreach', 'endforeach', 'for', 'endfor', 'while', 'endwhile', 'isset', 'empty', 'include', 'extends', 'section', 'endsection', 'yield', 'stack', 'push', 'endpush', 'endphp', 'php', 'csrf', 'method', 'can', 'endcan', 'auth', 'guest', 'unless', 'endunless'];
+
+        return [
+            'monacoEditor' => [
+                'defaultTheme' => config('monaco-editor.default_theme', 'vs-dark'),
+                'defaultLanguage' => config('monaco-editor.default_language', 'blade'),
+                'defaultMinHeight' => config('monaco-editor.default_min_height', '16rem'),
+                'defaults' => (array) config('monaco-editor.defaults', []),
+                'blade' => [
+                    'keywords' => (array) data_get($bladeConfig, 'keywords', $bladeDirectives),
+                    'directives' => (array) $bladeDirectives,
+                    'patterns' => (array) data_get($bladeConfig, 'patterns', []),
+                    'delimiters' => [
+                        'output' => data_get($bladeConfig, 'delimiters.output', ['{{', '}}']),
+                        'raw' => data_get($bladeConfig, 'delimiters.raw', ['{!!', '!!}']),
+                        'comment' => data_get($bladeConfig, 'delimiters.comment', ['{{--', '--}}']),
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**

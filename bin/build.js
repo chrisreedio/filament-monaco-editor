@@ -25,28 +25,49 @@ const defaultOptions = {
     treeShaking: true,
     target: ['es2020'],
     minify: !isDev,
-    plugins: [{
-        name: 'watchPlugin',
-        setup: function (build) {
-            build.onStart(() => {
-                console.log(`Build started at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
-            })
+    loader: {
+        '.css': 'css',
+        '.ttf': 'base64',
+        '.woff': 'base64',
+        '.woff2': 'base64',
+        '.eot': 'base64',
+        '.svg': 'dataurl',
+        '.png': 'dataurl',
+    },
+    plugins: [
+        {
+            name: 'watchPlugin',
+            setup: function (build) {
+                build.onStart(() => {
+                    console.log(`Build started at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
+                })
 
-            build.onEnd((result) => {
-                if (result.errors.length > 0) {
-                    console.log(`Build failed at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`, result.errors)
-                } else {
-                    console.log(`Build finished at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
-                }
-            })
-        }
-    }],
+                build.onEnd((result) => {
+                    if (result.errors.length > 0) {
+                        console.log(`Build failed at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`, result.errors)
+                    } else {
+                        console.log(`Build finished at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
+                    }
+                })
+            },
+        },
+    ],
 }
 
-compile({
-    ...defaultOptions,
-    entryPoints: ['./resources/js/index.js'],
-    outfile: './resources/dist/filament-monaco-editor.js',
-}).then(() => {
-    console.log(`Build completed for filament-monaco-editor.js`)
-})
+;(async () => {
+    const buildPromise = compile({
+        ...defaultOptions,
+        entryPoints: ['./resources/js/index.js'],
+        outfile: './resources/dist/components/monaco-code-editor.js',
+    })
+
+    const cssPromise = compile({
+        ...defaultOptions,
+        entryPoints: ['./resources/css/index.css'],
+        outfile: './resources/dist/monaco-code-editor.css',
+    })
+
+    await Promise.all([buildPromise, cssPromise])
+
+    console.log('Build completed for monaco-code-editor.js and monaco-code-editor.css')
+})()
