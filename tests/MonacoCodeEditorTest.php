@@ -8,7 +8,7 @@ it('stores configuration for editor language, theme, size, and readonly flag', f
     config(['monaco-editor.default_theme' => 'vs-dark']);
     config(['monaco-editor.default_min_height' => '14rem']);
     config(['monaco-editor.defaults.fontSize' => 12]);
-    
+
     $field = MonacoCodeEditor::make('template')
         ->language('php')
         ->theme('vs-light')
@@ -54,8 +54,8 @@ it('uses package defaults for blade and exposes blade payload aliases', function
 it('registers package assets and script data in the service provider', function () {
     $provider = new MonacoEditorServiceProvider(app());
 
-    $scriptDataMethod = new \ReflectionMethod(MonacoEditorServiceProvider::class, 'getScriptData');
-    $assetsMethod = new \ReflectionMethod(MonacoEditorServiceProvider::class, 'getAssets');
+    $scriptDataMethod = new ReflectionMethod(MonacoEditorServiceProvider::class, 'getScriptData');
+    $assetsMethod = new ReflectionMethod(MonacoEditorServiceProvider::class, 'getAssets');
     $scriptDataMethod->setAccessible(true);
     $assetsMethod->setAccessible(true);
 
