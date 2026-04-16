@@ -4,41 +4,42 @@ use ChrisReedIO\MonacoEditor\Forms\Components\MonacoCodeEditor;
 use ChrisReedIO\MonacoEditor\MonacoEditorServiceProvider;
 
 it('stores configuration for editor language, theme, size, and readonly flag')
-    ->tap(fn () => config(['monaco-editor.default_language' => 'blade']))
-    ->tap(fn () => config(['monaco-editor.default_theme' => 'vs-dark']))
-    ->tap(fn () => config(['monaco-editor.default_min_height' => '14rem']))
-    ->tap(fn () => config(['monaco-editor.defaults.fontSize' => 12]))
-    ->tap(function () {
-        $field = MonacoCodeEditor::make('template')
-            ->language('php')
-            ->theme('vs-light')
-            ->height('24rem')
-            ->readonly()
-            ->options([
-                'tabSize' => 2,
-            ]);
-
-        expect($field->getLanguage())->toBe('php')
-            ->and($field->getTheme())->toBe('vs-light')
-            ->and($field->getMinHeight())->toBe('24rem')
-            ->and($field->isReadonly())->toBeTrue()
-            ->and($field->getOptions())->toMatchArray(['tabSize' => 2]);
-
-        expect($field->getConfig())->toMatchArray([
-            'language' => 'php',
-            'theme' => 'vs-light',
-            'height' => '24rem',
-            'readonly' => true,
-        ]);
-
-        expect($field->getConfig()['options'])->toMatchArray([
-            'fontSize' => 12,
-            'lineNumbers' => 'on',
-            'scrollBeyondLastLine' => false,
-            'minimap' => ['enabled' => false],
+{
+    config(['monaco-editor.default_language' => 'blade']);
+    config(['monaco-editor.default_theme' => 'vs-dark']);
+    config(['monaco-editor.default_min_height' => '14rem']);
+    config(['monaco-editor.defaults.fontSize' => 12]);
+    
+    $field = MonacoCodeEditor::make('template')
+        ->language('php')
+        ->theme('vs-light')
+        ->height('24rem')
+        ->readonly()
+        ->options([
             'tabSize' => 2,
         ]);
-    });
+
+    expect($field->getLanguage())->toBe('php')
+        ->and($field->getTheme())->toBe('vs-light')
+        ->and($field->getMinHeight())->toBe('24rem')
+        ->and($field->isReadonly())->toBeTrue()
+        ->and($field->getOptions())->toMatchArray(['tabSize' => 2]);
+
+    expect($field->getConfig())->toMatchArray([
+        'language' => 'php',
+        'theme' => 'vs-light',
+        'height' => '24rem',
+        'readonly' => true,
+    ]);
+
+    expect($field->getConfig()['options'])->toMatchArray([
+        'fontSize' => 12,
+        'lineNumbers' => 'on',
+        'scrollBeyondLastLine' => false,
+        'minimap' => ['enabled' => false],
+        'tabSize' => 2,
+    ]);
+});
 
 it('uses package defaults for blade and exposes blade payload aliases')
     ->tap(function () {
